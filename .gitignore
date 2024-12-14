@@ -12,3 +12,4 @@ htmlcov
 *requirement*.txt
 *.pickle
 .*venv/
+.mypy_cache
