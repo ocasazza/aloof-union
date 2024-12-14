@@ -1,11 +1,10 @@
 # aloof-union
 
-A python library for transpiling automations from tools like JSM and FS using Mermaid as an abstract intermidiate representation.
+Transmute service desk workflows between formats. Turn FreshService and JSM configurations into clear, visual representations.
 
 ## Requirements
 
 * Python 3.9 over
-
 
 ## Setup
 

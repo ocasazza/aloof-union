@@ -34,9 +34,8 @@ jobs:
 
     - name: Run tests with coverage
       id: tests
-      # tox -e py39 || true
       run: |
-        tox || true
+        # tox -e py39 || true
 
     - name: Debug coverage directory
       run: |
