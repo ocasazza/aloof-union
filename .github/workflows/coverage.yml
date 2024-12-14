@@ -40,77 +40,35 @@ jobs:
     - name: Run tests with coverage
       id: tests
       run: |
-        # Create a directory for test results
-        mkdir -p test-results
+        tox -e py39 || true
 
-        # Run tox and capture both stdout and stderr, and exit code
-        {
-          tox -e py39 2>&1
-          echo $? > test-results/exit_code.txt
-        } | tee test-results/test_output.log
-
-        # Extract test summary information
-        python -c '
-        import re
-        import sys
-
-        with open("test-results/test_output.log") as f:
-          content = f.read()
-
-        # Extract test summary using regex
-        summary = re.search(r"=+ (.*? tests?, .*? passed,.*?) =+", content)
-        if summary:
-          print(f"::set-output name=test_summary::{summary.group(1)}")
-        else:
-          print("::set-output name=test_summary::No test summary found")
-        '
-
-    - name: Update Coverage Report
-      if: always()
+    - name: Debug coverage directory
       run: |
-        # Add test results to coverage report
+        echo "Current directory contents:"
+        ls -la
+        echo "\nChecking for htmlcov:"
         if [ -d "htmlcov" ]; then
-          # Add test summary to the coverage report
-          cat > htmlcov/test_summary.html << EOF
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Test Results</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .summary { margin: 20px 0; padding: 10px; background: #f5f5f5; }
-            .results { white-space: pre-wrap; background: #f8f8f8; padding: 10px; }
-          </style>
-        </head>
-        <body>
-          <h1>Test Results</h1>
-          <div class="summary">
-            <h2>Summary</h2>
-            <p>${{ steps.tests.outputs.test_summary }}</p>
-          </div>
-          <div class="results">
-            <h2>Detailed Results</h2>
-            <pre>
-        EOF
-          
-          cat test-results/test_output.log >> htmlcov/test_summary.html
-          echo "</pre></div></body></html>" >> htmlcov/test_summary.html
-          
-          # Add link to test results in main coverage report
-          sed -i '/<\/body>/i <p><a href="test_summary.html">View Test Results</a></p>' htmlcov/index.html
+          echo "htmlcov exists, contents:"
+          ls -la htmlcov
+        else
+          echo "htmlcov directory not found"
         fi
 
-    - name: Deploy coverage report
-      if: always()
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./htmlcov
-        destination_dir: coverage
-        force_orphan: true
+    - name: Setup Pages
+      uses: actions/configure-pages@v2
 
-    - name: Report Status
-      if: always()
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: 'htmlcov'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Report Deployment Status
       run: |
-        echo "Test Summary: ${{ steps.tests.outputs.test_summary }}"
-        echo "Coverage report is available at: https://ocasazza.github.io/aloof-union/coverage/"
+        echo "Deployment ID: ${{ steps.deployment.outputs.deployment_id }}"
+        echo "Page URL: ${{ steps.deployment.outputs.page_url }}"
