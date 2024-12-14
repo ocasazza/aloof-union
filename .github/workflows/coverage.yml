@@ -38,14 +38,7 @@ jobs:
     - name: Run tests with coverage
       continue-on-error: true
       run: |
-        tox -e py39 || true
-        if [ -d "htmlcov" ]; then
-          echo "Coverage report generated successfully"
-        else
-          echo "Coverage report generation failed"
-          mkdir -p htmlcov
-          echo "<html><body><h1>Coverage Report Failed</h1><p>Tests failed but workflow continued.</p></body></html>" > htmlcov/index.html
-        fi
+        tox -e py39
         
     - name: Deploy coverage report
       if: always()
