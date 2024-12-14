@@ -5,7 +5,7 @@ build-backend = 'setuptools.build_meta'
 [project]
 name = 'aloof-union'
 description = '##### ToDo: Rewrite me #####'
-readme = 'README.rst'
+readme = 'README.md'
 license = {file = 'LICENSE'}
 authors = [{name='Olive Casazza', email='olive.casazza@schrodinger.com'}]
 dependencies = []
