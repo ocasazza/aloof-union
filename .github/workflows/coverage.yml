@@ -113,4 +113,4 @@ jobs:
       if: always()
       run: |
         echo "Test Summary: ${{ steps.tests.outputs.test_summary }}"
-        echo "Coverage report is available at: https://yourusername.github.io/aloof-union/coverage/"
+        echo "Coverage report is available at: https://ocasazza.github.io/aloof-union/coverage/"
