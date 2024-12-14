@@ -2,9 +2,7 @@
  aloof-union
 =============
 
-TODO: Rewrite me. Append your package's long description.
-
-
+A python library for transpiling automations from tools like JSM and FS using Mermaid as an abstract intermidiate representation.
 
 Requirements
 ============
