@@ -1,0 +1,47 @@
+[build-system]
+requires = ['setuptools', 'setuptools_scm']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'aloof-union'
+description = '##### ToDo: Rewrite me #####'
+readme = 'README.rst'
+license = {file = 'LICENSE'}
+authors = [{name='Olive Casazza', email='olive.casazza@schrodinger.com'}]
+dependencies = []
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT No Attribution License (MIT-0)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",    
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+requires-python = '>=3.9'
+dynamic = ['version']
+
+[project.scripts]
+#aloof-union = 'aloof_union.commands:main'
+
+[tools.setuptools]
+package-dir = {'' = 'src'}
+
+[tools.setuptools.dynamic]
+version = {attr = 'aloof_union.version.version'}
+
+[tool.setuptools_scm]
+write_to = 'src/aloof_union/version.py'
+version_scheme = 'python-simplified-semver'
+local_scheme = 'no-local-version'
+
+[project.urls]
+'Homepage' = 'https://aloof-union.github.schrodinger.io'
+
+[project.optional-dependencies]
+test=[
+    'tox'
+]
+doc = ['sphinx']

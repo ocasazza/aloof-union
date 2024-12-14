@@ -1,0 +1,3 @@
+[run]
+omit =
+    src/aloof_union/tests/*
