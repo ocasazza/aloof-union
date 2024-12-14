@@ -54,7 +54,7 @@ jobs:
       run: |
         if [ -f "htmlcov/index.html" ]; then
           echo "Coverage report has been generated and deployed"
-          echo "View it at https://yourusername.github.io/aloof-union/coverage/"
+          echo "View it at https://ocasazza.github.io/aloof-union/coverage/"
         else
           echo "Coverage report generation failed"
         fi
