@@ -15,14 +15,14 @@ A python library for transpiling automations from tools like JSM and FS using Me
 
 ## Test Coverage
 
-View the latest test coverage report [here](https://yourusername.github.io/aloof-union/coverage/).
+View the latest test coverage report [here](https://ocasazza.github.io/aloof-union/coverage/).
 
 Quick coverage summary:
 - Module coverage
 - Line coverage
 - Branch coverage
 
-[Detailed Coverage Report](https://yourusername.github.io/aloof-union/coverage/index.html)
+[Detailed Coverage Report](https://ocasazza.github.io/aloof-union/coverage/index.html)
 
 ## Local Development
 
