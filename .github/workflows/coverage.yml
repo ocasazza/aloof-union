@@ -1,7 +1,6 @@
 # .github/workflows/coverage.yml
 name: Coverage Report
 
-# Add permissions at workflow level
 permissions:
   contents: write
   pages: write
@@ -16,30 +15,91 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    # You can also add permissions at job level if needed
     permissions:
       contents: write
       pages: write
-      
+
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.9'
-        
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install tox tox-gh-actions
-        
-    - name: Run tests with coverage
-      continue-on-error: true
+
+    - name: Configure Git
       run: |
-        tox -e py39
-        
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Run tests with coverage
+      id: tests
+      run: |
+        # Create a directory for test results
+        mkdir -p test-results
+
+        # Run tox and capture both stdout and stderr, and exit code
+        {
+          tox -e py39 2>&1
+          echo $? > test-results/exit_code.txt
+        } | tee test-results/test_output.log
+
+        # Extract test summary information
+        python -c '
+        import re
+        import sys
+
+        with open("test-results/test_output.log") as f:
+          content = f.read()
+
+        # Extract test summary using regex
+        summary = re.search(r"=+ (.*? tests?, .*? passed,.*?) =+", content)
+        if summary:
+          print(f"::set-output name=test_summary::{summary.group(1)}")
+        else:
+          print("::set-output name=test_summary::No test summary found")
+        '
+
+    - name: Update Coverage Report
+      if: always()
+      run: |
+        # Add test results to coverage report
+        if [ -d "htmlcov" ]; then
+          # Add test summary to the coverage report
+          cat > htmlcov/test_summary.html << EOF
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Test Results</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .summary { margin: 20px 0; padding: 10px; background: #f5f5f5; }
+            .results { white-space: pre-wrap; background: #f8f8f8; padding: 10px; }
+          </style>
+        </head>
+        <body>
+          <h1>Test Results</h1>
+          <div class="summary">
+            <h2>Summary</h2>
+            <p>${{ steps.tests.outputs.test_summary }}</p>
+          </div>
+          <div class="results">
+            <h2>Detailed Results</h2>
+            <pre>
+        EOF
+          
+          cat test-results/test_output.log >> htmlcov/test_summary.html
+          echo "</pre></div></body></html>" >> htmlcov/test_summary.html
+          
+          # Add link to test results in main coverage report
+          sed -i '/<\/body>/i <p><a href="test_summary.html">View Test Results</a></p>' htmlcov/index.html
+        fi
+
     - name: Deploy coverage report
       if: always()
       uses: peaceiris/actions-gh-pages@v3
@@ -52,9 +112,5 @@ jobs:
     - name: Report Status
       if: always()
       run: |
-        if [ -f "htmlcov/index.html" ]; then
-          echo "Coverage report has been generated and deployed"
-          echo "View it at https://ocasazza.github.io/aloof-union/coverage/"
-        else
-          echo "Coverage report generation failed"
-        fi
+        echo "Test Summary: ${{ steps.tests.outputs.test_summary }}"
+        echo "Coverage report is available at: https://yourusername.github.io/aloof-union/coverage/"
