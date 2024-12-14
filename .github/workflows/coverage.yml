@@ -1,6 +1,12 @@
 # .github/workflows/coverage.yml
 name: Coverage Report
 
+# Add permissions at workflow level
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 on:
   push:
     branches: [ main ]
@@ -10,6 +16,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    # You can also add permissions at job level if needed
+    permissions:
+      contents: write
+      pages: write
+      
     steps:
     - uses: actions/checkout@v2
     
@@ -24,7 +36,7 @@ jobs:
         pip install tox tox-gh-actions
         
     - name: Run tests with coverage
-      continue-on-error: true  # This allows the workflow to continue even if tests fail
+      continue-on-error: true
       run: |
         tox -e py39 || true
         if [ -d "htmlcov" ]; then
@@ -36,16 +48,16 @@ jobs:
         fi
         
     - name: Deploy coverage report
-      if: always()  # This ensures the step runs even if previous steps failed
+      if: always()
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./htmlcov
         destination_dir: coverage
-        force_orphan: true  # This ensures a clean publish every time
+        force_orphan: true
 
     - name: Report Status
-      if: always()  # This ensures the step runs even if previous steps failed
+      if: always()
       run: |
         if [ -f "htmlcov/index.html" ]; then
           echo "Coverage report has been generated and deployed"
